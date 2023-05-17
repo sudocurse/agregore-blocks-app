@@ -28,23 +28,40 @@ class AddBlock extends Block {
             if (!link) {
                 return;
             }
-            console.log("adding " + link);
+            let block = new Block(link);
+            blocks.push(block.draw());
+            drawBlocks();
 
+            input.value = "";
         }
     }
 
     draw() {
-        let element = super.draw();
+        /* this one is a little different */
+        let blockElement = document.createElement("div");
+        blockElement.setAttribute("class", "block");
+
         // prepend text input field
-        element.setAttribute("class", "block add-block");
+        blockElement.setAttribute("class", "block add-block");
         let input = document.createElement("input");
         input.setAttribute("class", "add-block-input");
         input.setAttribute("type", "text");
         input.setAttribute("placeholder", "Enter URL");
-        element.prepend(document.createElement("br"));
-        element.prepend(input);
 
-        return element;
+        blockElement.append(input);
+        blockElement.append(document.createElement("br"));
+
+        let addButton = document.createElement("a");
+        addButton.setAttribute("class", "add-block-button");
+        addButton.append(document.createTextNode(this.data));
+        addButton.addEventListener("click", this.func);
+
+        blockElement.append(addButton);
+
+        // on click
+
+
+        return blockElement;
     }
 }
 
@@ -60,12 +77,19 @@ function makeAddBlock() {
     let block = new AddBlock();
     return block.draw();
 }
+let blocks = [];
+
+function drawBlocks(){
+    let shelf = document.getElementById("shelf");
+    for (let block of blocks) {
+        shelf.append(block);
+    }
+}
 
 window.onload = function run() {
     let rootDiv = document.getElementById("root");
     rootDiv.textContent = "My Collection";
 
-    let blocks = [];
 
     let shelf = document.createElement("div");
     shelf.setAttribute("id", "shelf");
@@ -83,7 +107,5 @@ window.onload = function run() {
     blocks.push(makeBlock("ipns://libp2p.io/"));
     blocks.push(makeBlock("ipfs://bafybeiggiypjr5l5xwjtgbc5hndu3xigcl6arf62mlx5ekhflemjhhifpy"));
 
-    for (let block of blocks) {
-        shelf.append(block);
-    }
+    drawBlocks();
 };
