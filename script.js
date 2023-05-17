@@ -41,6 +41,7 @@ window.onload = function run() {
     blocks.push(makeBlock("https://www.zombo.com/"));
     blocks.push(makeBlock("ipns://docs.ipfs.tech/"));
     blocks.push(makeBlock("ipns://libp2p.io/"));
+    blocks.push(makeBlock("ipfs://bafybeiggiypjr5l5xwjtgbc5hndu3xigcl6arf62mlx5ekhflemjhhifpy"));
 
     let shelf = document.createElement("div");
     shelf.setAttribute("id", "shelf");

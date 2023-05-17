@@ -20,6 +20,26 @@ input, button, textarea, select {
     font: inherit;
 }
 
+#root {
+    display: block;
+    width: 94%;
+    margin: 0 3%;
+}
+
+#shelf {
+    display: grid;
+    grid-gap: 10%;
+
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-auto-flow: dense;
+}
+
 .block {
+    position: relative;
     border: 1px solid #ffffff;
+    width: 100%;
+    font-size: 2vw;
+    aspect-ratio: 1;
+    overflow: hidden;
+    word-wrap: break-word;
 }
