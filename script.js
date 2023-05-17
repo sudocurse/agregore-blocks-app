@@ -3,7 +3,7 @@ class Block {
         this.data = link;
 
         this.func = function() {
-            window.open(this.data, "_blank");
+            window.location.href = link;
         };
     }
 
