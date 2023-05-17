@@ -58,9 +58,6 @@ class AddBlock extends Block {
 
         blockElement.append(addButton);
 
-        // on click
-
-
         return blockElement;
     }
 }
@@ -77,6 +74,7 @@ function makeAddBlock() {
     let block = new AddBlock();
     return block.draw();
 }
+
 let blocks = [];
 
 function drawBlocks(){
@@ -90,22 +88,12 @@ window.onload = function run() {
     let rootDiv = document.getElementById("root");
     rootDiv.textContent = "My Collection";
 
-
     let shelf = document.createElement("div");
     shelf.setAttribute("id", "shelf");
     rootDiv.append(shelf);
 
     let b = makeAddBlock();
     blocks.push(b);
-
-    b = makeBlock("https://duckduckgo.com/");
-    blocks.push(b); // todo position
-
-    blocks.push(makeBlock("https://developer.mozilla.org/"));
-    blocks.push(makeBlock("https://www.zombo.com/"));
-    blocks.push(makeBlock("ipns://docs.ipfs.tech/"));
-    blocks.push(makeBlock("ipns://libp2p.io/"));
-    blocks.push(makeBlock("ipfs://bafybeiggiypjr5l5xwjtgbc5hndu3xigcl6arf62mlx5ekhflemjhhifpy"));
 
     drawBlocks();
 };
