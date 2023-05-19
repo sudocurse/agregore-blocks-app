@@ -1,8 +1,13 @@
+function navigate(link) {
+    window.location.href = link;
+}
+
 function makeInputElement(value) {
     let input = document.createElement("input");
     input.setAttribute("class", "add-block-input");
     input.setAttribute("type", "text");
-    input.setAttribute("placeholder", value);
+    input.setAttribute("placeholder", "Enter URL");
+    input.setAttribute("value", value);
     return input;
 }
 
@@ -10,9 +15,8 @@ class Block {
     constructor(link) {
         this.data = link;
 
-        this.func = function() {
-            window.location.href = link;
-        };
+        this.func = navigate.bind(this, link);
+        this.drawEdit = this.drawEdit.bind(this);
     }
 
     draw() {
@@ -42,6 +46,26 @@ class Block {
 
     drawEdit(event) {
         event.stopPropagation();
+
+        let blockElement = event.target.parentElement.parentElement;
+
+        let input = makeInputElement(this.data);
+
+        blockElement.replaceChild(input, blockElement.firstChild);
+
+        let confirmButton = document.createElement("a");
+        confirmButton.setAttribute("href", "#");
+        confirmButton.setAttribute("class", "confirm-edit-button");
+        confirmButton.append(document.createTextNode("Save ✔️"));
+
+        // find overlay in block element
+        let overlay = blockElement.getElementsByClassName("overlay")[0];
+        overlay.replaceChild(confirmButton, overlay.firstChild);
+
+        blockElement.removeEventListener("click", this.func);
+
+        // confirmButton.addEventListener("click", function(event) {
+        // };
     }
 }
 
@@ -69,7 +93,7 @@ class AddBlock extends Block {
         blockElement.setAttribute("class", "block add-block");
 
         // prepend text input field
-        let input = makeInputElement("Enter URL");
+        let input = makeInputElement("");
 
         blockElement.append(input);
         blockElement.append(document.createElement("br"));
