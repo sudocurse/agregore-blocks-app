@@ -1,3 +1,11 @@
+function makeInputElement(value) {
+    let input = document.createElement("input");
+    input.setAttribute("class", "add-block-input");
+    input.setAttribute("type", "text");
+    input.setAttribute("placeholder", value);
+    return input;
+}
+
 class Block {
     constructor(link) {
         this.data = link;
@@ -14,7 +22,26 @@ class Block {
 
         // on click
         blockElement.addEventListener("click", this.func);
+
+        // edit button overlay
+        let overlay = document.createElement("div");
+        overlay.setAttribute("class", "overlay");
+
+        let editButton = document.createElement("a");
+        editButton.setAttribute("href", "#");
+        editButton.setAttribute("class", "edit-button");
+        editButton.append(document.createTextNode("✏️"));
+
+        editButton.addEventListener("click", this.drawEdit);
+
+        overlay.append(editButton);
+
+        blockElement.append(overlay);
         return blockElement;
+    }
+
+    drawEdit(event) {
+        event.stopPropagation();
     }
 }
 
@@ -39,14 +66,10 @@ class AddBlock extends Block {
     draw() {
         /* this one is a little different */
         let blockElement = document.createElement("div");
-        blockElement.setAttribute("class", "block");
+        blockElement.setAttribute("class", "block add-block");
 
         // prepend text input field
-        blockElement.setAttribute("class", "block add-block");
-        let input = document.createElement("input");
-        input.setAttribute("class", "add-block-input");
-        input.setAttribute("type", "text");
-        input.setAttribute("placeholder", "Enter URL");
+        let input = makeInputElement("Enter URL");
 
         blockElement.append(input);
         blockElement.append(document.createElement("br"));
@@ -93,6 +116,9 @@ window.onload = function run() {
     rootDiv.append(shelf);
 
     let b = makeAddBlock();
+    blocks.push(b);
+
+    b = makeBlock("https://www.duckduckgo.com");
     blocks.push(b);
 
     drawBlocks();

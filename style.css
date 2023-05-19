@@ -36,23 +36,36 @@ input, button, textarea, select {
     position: relative;
     border: 1px solid #ffffff;
     width: 100%;
-    font-size: 2vw;
-    padding: 3%;
+    padding: 15%;
     aspect-ratio: 1;
     overflow: hidden;
     word-wrap: break-word;
-    border-radius: 1dvmax;
+    border-radius: 0.1dvmax;
 }
 
 .add-block {
     text-align: center;
-    padding: 0;
+    padding: 15%;
 }
 
-.add-block input {
+.add-block input, .block input {
+    padding: 0;
     background: #111111;
     height: 80%;
     color: aqua;
     border: none;
     outline: none;
+}
+
+div.overlay {
+    position: absolute;
+    bottom: 7.5%;
+    right: 3%;
+    width: 100%;
+    text-align: center;
+
+}
+
+a.edit-button {
+    text-decoration: none;
 }
