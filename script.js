@@ -17,6 +17,7 @@ class Block {
 
         this.func = navigate.bind(this, link);
         this.drawEdit = this.drawEdit.bind(this);
+        this.saveEdit = this.saveEdit.bind(this);
     }
 
     draw() {
@@ -64,9 +65,21 @@ class Block {
 
         blockElement.removeEventListener("click", this.func);
 
-        // confirmButton.addEventListener("click", function(event) {
-        // };
+        confirmButton.addEventListener("click", this.saveEdit);
     }
+
+    saveEdit(event) {
+        event.stopPropagation();
+        // get input
+        let blockElement = event.target.parentElement.parentElement;
+        let input = blockElement.getElementsByTagName("input")[0];
+        this.data = input.value;
+        this.func = navigate.bind(this, this.data);
+        while (blockElement.firstChild) {
+            blockElement.removeChild(blockElement.firstChild);
+        }
+        drawBlocks();
+    };
 }
 
 class AddBlock extends Block {
@@ -80,7 +93,7 @@ class AddBlock extends Block {
                 return;
             }
             let block = new Block(link);
-            blocks.push(block.draw());
+            blocks.push(block);
             drawBlocks();
 
             input.value = "";
@@ -111,23 +124,20 @@ class AddBlock extends Block {
 
 function makeBlock(link, position=-1) {
     // make the block object out of a link
-    let block = new Block(link);
-
-    // draw the block
-    return block.draw();
+    return new Block(link);
 }
 
-function makeAddBlock() {
-    let block = new AddBlock();
-    return block.draw();
-}
 
 let blocks = [];
 
 function drawBlocks(){
     let shelf = document.getElementById("shelf");
+    while (shelf.firstChild) {
+        shelf.removeChild(shelf.firstChild);
+    }
     for (let block of blocks) {
-        shelf.append(block);
+        // draw the block
+        shelf.append(block.draw());
     }
 }
 
@@ -139,10 +149,10 @@ window.onload = function run() {
     shelf.setAttribute("id", "shelf");
     rootDiv.append(shelf);
 
-    let b = makeAddBlock();
-    blocks.push(b);
+    let addBlock = new AddBlock();
+    blocks.push(addBlock);
 
-    b = makeBlock("https://www.duckduckgo.com");
+    let b = makeBlock("https://www.duckduckgo.com");
     blocks.push(b);
 
     drawBlocks();

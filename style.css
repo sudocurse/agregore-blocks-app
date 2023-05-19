@@ -48,6 +48,11 @@ input, button, textarea, select {
     padding: 15%;
 }
 
+.confirm-edit-button {
+    text-decoration: none;
+    color: white;
+}
+
 .add-block input, .block input {
     padding: 0;
     background: #111111;
