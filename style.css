@@ -29,7 +29,7 @@ input, button, textarea, select {
 #shelf {
     display: grid;
     grid-gap: 10%;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .block {
@@ -56,6 +56,7 @@ input, button, textarea, select {
 .add-block input, .block input {
     padding: 0;
     background: #111111;
+    width: 100%;
     height: 80%;
     color: aqua;
     border: none;
