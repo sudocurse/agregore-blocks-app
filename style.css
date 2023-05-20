@@ -36,7 +36,7 @@ input, button, textarea, select {
     position: relative;
     border: 1px solid #ffffff;
     width: 100%;
-    padding: 15%;
+    padding: 5%;
     aspect-ratio: 1;
     overflow: hidden;
     word-wrap: break-word;
@@ -45,7 +45,7 @@ input, button, textarea, select {
 
 .add-block {
     text-align: center;
-    padding: 15%;
+    padding: 5%;
 }
 
 .confirm-edit-button {
@@ -71,6 +71,7 @@ div.overlay {
 
 }
 
-a.edit-button {
+a.edit-button, a.delete-button {
     text-decoration: none;
+    padding: 0 5%;
 }

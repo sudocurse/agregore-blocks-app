@@ -11,6 +11,7 @@ function makeInputElement(value) {
     return input;
 }
 
+
 class Block {
     constructor(link) {
         this.data = link;
@@ -18,6 +19,7 @@ class Block {
         this.func = navigate.bind(this, link);
         this.drawEdit = this.drawEdit.bind(this);
         this.saveEdit = this.saveEdit.bind(this);
+        this.deleteBlock = this.deleteBlock.bind(this);
     }
 
     draw() {
@@ -39,7 +41,15 @@ class Block {
 
         editButton.addEventListener("click", this.drawEdit);
 
+        let deleteButton = document.createElement("a");
+        deleteButton.setAttribute("href", "#");
+        deleteButton.setAttribute("class", "delete-button");
+        deleteButton.append(document.createTextNode("❌"));
+
+        deleteButton.addEventListener("click", this.deleteBlock);
+
         overlay.append(editButton);
+        overlay.append(deleteButton);
 
         blockElement.append(overlay);
         return blockElement;
@@ -80,6 +90,13 @@ class Block {
         }
         drawBlocks();
     };
+
+    deleteBlock(event) {
+        event.stopPropagation();
+        blocks.splice(blocks.indexOf(this), 1);
+        drawBlocks();
+    }
+
 }
 
 class AddBlock extends Block {
@@ -126,7 +143,6 @@ function makeBlock(link, position=-1) {
     // make the block object out of a link
     return new Block(link);
 }
-
 
 let blocks = [];
 
