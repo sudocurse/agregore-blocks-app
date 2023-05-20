@@ -88,12 +88,14 @@ class Block {
         while (blockElement.firstChild) {
             blockElement.removeChild(blockElement.firstChild);
         }
+        saveBlocks();
         drawBlocks();
     };
 
     deleteBlock(event) {
         event.stopPropagation();
-        blocks.splice(blocks.indexOf(this), 1);
+        blocksToDraw.splice(blocksToDraw.indexOf(this), 1);
+        saveBlocks();
         drawBlocks();
     }
 
@@ -109,8 +111,7 @@ class AddBlock extends Block {
             if (!link) {
                 return;
             }
-            let block = new Block(link);
-            blocks.push(block);
+            makeAndSaveNewBlock(link);
             drawBlocks();
 
             input.value = "";
@@ -139,37 +140,57 @@ class AddBlock extends Block {
     }
 }
 
-function makeBlock(link, position=-1) {
+function makeAndSaveNewBlock(link, position=-1) {
     // make the block object out of a link
-    return new Block(link);
+    blocksToDraw.push(new Block(link));
+    saveBlocks();
 }
-
-let blocks = [];
 
 function drawBlocks(){
     let shelf = document.getElementById("shelf");
     while (shelf.firstChild) {
         shelf.removeChild(shelf.firstChild);
     }
-    for (let block of blocks) {
+    shelf.append(new AddBlock().draw());
+    for (let block of blocksToDraw) {
         // draw the block
         shelf.append(block.draw());
     }
 }
 
-window.onload = function run() {
+function saveBlocks() {
+    let data = [];
+    for (let block of blocksToDraw) {
+        data.push(block.data);
+    }
+    localStorage.setItem("blocks", JSON.stringify(data));
+}
+
+function loadBlocks() {
+    let data = JSON.parse(localStorage.getItem("blocks"));
+    if (data) {
+        for (let link of data) {
+            blocksToDraw.push(new Block(link));
+        }
+        drawBlocks();
+    } else {
+        makeAndSaveNewBlock("https://ipfs-search.com/");
+    }
+}
+
+let blocksToDraw = [];
+
+function initializeRoot() {
     let rootDiv = document.getElementById("root");
     rootDiv.textContent = "My Collection";
 
     let shelf = document.createElement("div");
     shelf.setAttribute("id", "shelf");
     rootDiv.append(shelf);
+}
 
-    let addBlock = new AddBlock();
-    blocks.push(addBlock);
-
-    let b = makeBlock("https://www.duckduckgo.com");
-    blocks.push(b);
-
+window.onload = function run() {
+    initializeRoot();
+    loadBlocks();
     drawBlocks();
 };
