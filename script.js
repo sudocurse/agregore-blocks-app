@@ -1,5 +1,14 @@
-function navigate(link) {
-    window.location.href = link;
+const BLOCKS_KEY = 'blocks-app'
+const BLOCKS_IPNS_KEY = `ipns://localhost?key=${BLOCKS_KEY}`
+const BLOCKS_JSON_FILE = 'blocks.json'
+const FILES_TO_COPY = [
+  'index.html',
+  'style.css',
+  'script.js'
+]
+
+function navigate (link) {
+  window.location.href = link
 }
 
 function makeInputElement (value) {
@@ -63,19 +72,19 @@ class Block {
 
     blockElement.replaceChild(input, blockElement.firstChild)
 
-        let confirmButton = document.createElement("a");
-        confirmButton.setAttribute("href", "#");
-        confirmButton.setAttribute("class", "confirm-edit-button");
-        confirmButton.append(document.createTextNode("Save ✔️"));
+    const confirmButton = document.createElement('a')
+    confirmButton.setAttribute('href', '#')
+    confirmButton.setAttribute('class', 'confirm-edit-button')
+    confirmButton.append(document.createTextNode('Save ✔️'))
 
-        // find overlay in block element
-        let overlay = blockElement.getElementsByClassName("overlay")[0];
-        overlay.replaceChild(confirmButton, overlay.firstChild);
+    // find overlay in block element
+    const overlay = blockElement.getElementsByClassName('overlay')[0]
+    overlay.replaceChild(confirmButton, overlay.firstChild)
 
-        blockElement.removeEventListener("click", this.func);
+    blockElement.removeEventListener('click', this.func)
 
-        confirmButton.addEventListener("click", this.saveEdit);
-    }
+    confirmButton.addEventListener('click', this.saveEdit)
+  }
 
   saveEdit (event) {
     event.stopPropagation()
@@ -156,24 +165,72 @@ function drawBlocks () {
   }
 }
 
-function saveBlocks() {
-    let data = [];
-    for (let block of blocksToDraw) {
-        data.push(block.data);
-    }
-    localStorage.setItem("blocks", JSON.stringify(data));
+async function getOwnIPNS () {
+  try {
+    const response = await fetch(BLOCKS_IPNS_KEY)
+    if (!response.ok) throw new Error(await response.text())
+    return response.url
+  } catch {
+    // Couldn't get the URL!
+    console.log('Creating site')
+    await initOwnSite()
+    return getOwnIPNS()
+  }
 }
 
-function loadBlocks() {
-    let data = JSON.parse(localStorage.getItem("blocks"));
-    if (data) {
-        for (let link of data) {
-            blocksToDraw.push(new Block(link));
-        }
-        drawBlocks();
-    } else {
-        makeAndSaveNewBlock("https://ipfs-search.com/");
+async function initOwnSite () {
+  const response = await fetch(BLOCKS_IPNS_KEY, { method: 'post' })
+  const siteURL = response.headers.get('Location')
+  const form = new FormData()
+  for (const file of FILES_TO_COPY) {
+    const sourceURL = new URL(`./${file}`, window.location.href).href
+    const fileResponse = await fetch(sourceURL)
+    form.append('file', await fileResponse.blob(), file)
+  }
+
+  console.log('Uploading initial site contents')
+  const uploadResponse = await fetch(siteURL, {
+    method: 'put',
+    body: form
+  })
+
+  if (!uploadResponse.ok) {
+    throw new Error(`Cannot create site: ${response.status}\n${await uploadResponse.text()}`)
+  }
+}
+
+async function saveBlocks () {
+  const data = []
+  for (const block of blocksToDraw) {
+    data.push(block.data)
+  }
+  const siteURL = await getOwnIPNS()
+  console.log('About to save blocks list to', siteURL)
+  const blockFileURL = new URL(BLOCKS_JSON_FILE, siteURL).href
+  await fetch(blockFileURL, {
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+
+  if (!window.location.href.includes(siteURL)) {
+    window.location.href = siteURL
+  }
+}
+
+async function loadBlocks () {
+  const blockFileURL = new URL(BLOCKS_JSON_FILE, window.location.href).href
+  const dataResponse = await fetch(blockFileURL)
+
+  if (dataResponse.ok) {
+    const data = await dataResponse.json()
+    for (const link of data) {
+      blocksToDraw.push(new Block(link))
     }
+    drawBlocks()
+  } else {
+    console.error(`Could not load blocks: ${dataResponse.status} - ${await dataResponse.text()}`)
+    makeAndSaveNewBlock('https://ipfs-search.com/')
+  }
 }
 
 const blocksToDraw = []
