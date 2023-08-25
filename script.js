@@ -2,67 +2,66 @@ function navigate(link) {
     window.location.href = link;
 }
 
-function makeInputElement(value) {
-    let input = document.createElement("input");
-    input.setAttribute("class", "add-block-input");
-    input.setAttribute("type", "text");
-    input.setAttribute("placeholder", "Enter URL");
-    input.setAttribute("value", value);
-    return input;
+function makeInputElement (value) {
+  const input = document.createElement('input')
+  input.setAttribute('class', 'add-block-input')
+  input.setAttribute('type', 'text')
+  input.setAttribute('placeholder', 'Enter URL')
+  input.setAttribute('value', value)
+  return input
 }
 
-
 class Block {
-    constructor(link) {
-        this.data = link;
+  constructor (link) {
+    this.data = link
 
-        this.func = navigate.bind(this, link);
-        this.drawEdit = this.drawEdit.bind(this);
-        this.saveEdit = this.saveEdit.bind(this);
-        this.deleteBlock = this.deleteBlock.bind(this);
-    }
+    this.func = navigate.bind(this, link)
+    this.drawEdit = this.drawEdit.bind(this)
+    this.saveEdit = this.saveEdit.bind(this)
+    this.deleteBlock = this.deleteBlock.bind(this)
+  }
 
-    draw() {
-        let blockElement = document.createElement("div");
-        blockElement.setAttribute("class", "block");
-        blockElement.append(document.createTextNode(this.data));
+  draw () {
+    const blockElement = document.createElement('div')
+    blockElement.setAttribute('class', 'block')
+    blockElement.append(document.createTextNode(this.data))
 
-        // on click
-        blockElement.addEventListener("click", this.func);
+    // on click
+    blockElement.addEventListener('click', this.func)
 
-        // edit button overlay
-        let overlay = document.createElement("div");
-        overlay.setAttribute("class", "overlay");
+    // edit button overlay
+    const overlay = document.createElement('div')
+    overlay.setAttribute('class', 'overlay')
 
-        let editButton = document.createElement("a");
-        editButton.setAttribute("href", "#");
-        editButton.setAttribute("class", "edit-button");
-        editButton.append(document.createTextNode("✏️"));
+    const editButton = document.createElement('a')
+    editButton.setAttribute('href', '#')
+    editButton.setAttribute('class', 'edit-button')
+    editButton.append(document.createTextNode('✏️'))
 
-        editButton.addEventListener("click", this.drawEdit);
+    editButton.addEventListener('click', this.drawEdit)
 
-        let deleteButton = document.createElement("a");
-        deleteButton.setAttribute("href", "#");
-        deleteButton.setAttribute("class", "delete-button");
-        deleteButton.append(document.createTextNode("❌"));
+    const deleteButton = document.createElement('a')
+    deleteButton.setAttribute('href', '#')
+    deleteButton.setAttribute('class', 'delete-button')
+    deleteButton.append(document.createTextNode('❌'))
 
-        deleteButton.addEventListener("click", this.deleteBlock);
+    deleteButton.addEventListener('click', this.deleteBlock)
 
-        overlay.append(editButton);
-        overlay.append(deleteButton);
+    overlay.append(editButton)
+    overlay.append(deleteButton)
 
-        blockElement.append(overlay);
-        return blockElement;
-    }
+    blockElement.append(overlay)
+    return blockElement
+  }
 
-    drawEdit(event) {
-        event.stopPropagation();
+  drawEdit (event) {
+    event.stopPropagation()
 
-        let blockElement = event.target.parentElement.parentElement;
+    const blockElement = event.target.parentElement.parentElement
 
-        let input = makeInputElement(this.data);
+    const input = makeInputElement(this.data)
 
-        blockElement.replaceChild(input, blockElement.firstChild);
+    blockElement.replaceChild(input, blockElement.firstChild)
 
         let confirmButton = document.createElement("a");
         confirmButton.setAttribute("href", "#");
@@ -78,84 +77,83 @@ class Block {
         confirmButton.addEventListener("click", this.saveEdit);
     }
 
-    saveEdit(event) {
-        event.stopPropagation();
-        // get input
-        let blockElement = event.target.parentElement.parentElement;
-        let input = blockElement.getElementsByTagName("input")[0];
-        this.data = input.value;
-        this.func = navigate.bind(this, this.data);
-        while (blockElement.firstChild) {
-            blockElement.removeChild(blockElement.firstChild);
-        }
-        saveBlocks();
-        drawBlocks();
-    };
-
-    deleteBlock(event) {
-        event.stopPropagation();
-        blocksToDraw.splice(blocksToDraw.indexOf(this), 1);
-        saveBlocks();
-        drawBlocks();
+  saveEdit (event) {
+    event.stopPropagation()
+    // get input
+    const blockElement = event.target.parentElement.parentElement
+    const input = blockElement.getElementsByTagName('input')[0]
+    this.data = input.value
+    this.func = navigate.bind(this, this.data)
+    while (blockElement.firstChild) {
+      blockElement.removeChild(blockElement.firstChild)
     }
+    saveBlocks()
+    drawBlocks()
+  };
 
+  deleteBlock (event) {
+    event.stopPropagation()
+    blocksToDraw.splice(blocksToDraw.indexOf(this), 1)
+    saveBlocks()
+    drawBlocks()
+  }
 }
 
 class AddBlock extends Block {
-    constructor() {
-        super();
-        this.data = "Add Block +";
-        this.func = function() {
-            let input = document.getElementsByClassName("add-block-input")[0];
-            let link = input.value;
-            if (!link) {
-                return;
-            }
-            makeAndSaveNewBlock(link);
-            drawBlocks();
+  constructor () {
+    super()
+    this.data = 'Add Block +'
+    this.func = function () {
+      const input = document.getElementsByClassName('add-block-input')[0]
+      const link = input.value
+      if (!link) {
+        return
+      }
+      makeAndSaveNewBlock(link)
+      drawBlocks()
 
-            input.value = "";
-        }
+      input.value = ''
     }
+  }
 
-    draw() {
-        /* this one is a little different */
-        let blockElement = document.createElement("div");
-        blockElement.setAttribute("class", "block add-block");
+  draw () {
+    /* this one is a little different */
+    const blockElement = document.createElement('div')
+    blockElement.setAttribute('class', 'block add-block')
 
-        // prepend text input field
-        let input = makeInputElement("");
+    // prepend text input field
+    const input = makeInputElement('')
 
-        blockElement.append(input);
-        blockElement.append(document.createElement("br"));
+    blockElement.append(input)
+    blockElement.append(document.createElement('br'))
 
-        let addButton = document.createElement("a");
-        addButton.setAttribute("class", "add-block-button");
-        addButton.append(document.createTextNode(this.data));
-        addButton.addEventListener("click", this.func);
+    const addButton = document.createElement('a')
+    addButton.setAttribute('class', 'add-block-button')
+    addButton.append(document.createTextNode(this.data))
+    addButton.addEventListener('click', this.func)
 
-        blockElement.append(addButton);
+    blockElement.append(addButton)
 
-        return blockElement;
-    }
+    return blockElement
+  }
 }
 
-function makeAndSaveNewBlock(link, position=-1) {
-    // make the block object out of a link
-    blocksToDraw.push(new Block(link));
-    saveBlocks();
+function makeAndSaveNewBlock (link, position = -1) {
+  // make the block object out of a link
+  blocksToDraw.push(new Block(link))
+  saveBlocks()
 }
 
-function drawBlocks(){
-    let shelf = document.getElementById("shelf");
-    while (shelf.firstChild) {
-        shelf.removeChild(shelf.firstChild);
-    }
-    shelf.append(new AddBlock().draw());
-    for (let block of blocksToDraw) {
-        // draw the block
-        shelf.append(block.draw());
-    }
+function drawBlocks () {
+  const shelf = document.getElementById('shelf')
+  while (shelf.firstChild) {
+    shelf.removeChild(shelf.firstChild)
+  }
+  shelf.append(new AddBlock().draw())
+  for (const block of blocksToDraw) {
+    // draw the block
+    shelf.append(block.draw())
+  }
 }
 
 function saveBlocks() {
@@ -178,19 +176,19 @@ function loadBlocks() {
     }
 }
 
-let blocksToDraw = [];
+const blocksToDraw = []
 
-function initializeRoot() {
-    let rootDiv = document.getElementById("root");
-    rootDiv.textContent = "My Collection";
+function initializeRoot () {
+  const rootDiv = document.getElementById('root')
+  rootDiv.textContent = 'My Collection'
 
-    let shelf = document.createElement("div");
-    shelf.setAttribute("id", "shelf");
-    rootDiv.append(shelf);
+  const shelf = document.createElement('div')
+  shelf.setAttribute('id', 'shelf')
+  rootDiv.append(shelf)
 }
 
-window.onload = function run() {
-    initializeRoot();
-    loadBlocks();
-    drawBlocks();
-};
+window.onload = function run () {
+  initializeRoot()
+  loadBlocks()
+  drawBlocks()
+}
